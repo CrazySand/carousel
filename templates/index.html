@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>A story</title>
+    <script src="../static/jquery-3.7.1.min.js.js"></script>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        bottom: 0;
+        text-decoration: none;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+
+        align-items: center;
+        height: 100vh;
+        /* 背景渐变 */
+        background-image: linear-gradient(
+          to bottom right,
+          #91defe,
+          #99c0f9,
+          #bdb6ec,
+          #d7b3e3,
+          #efb3d5,
+          #f9bccc
+        );
+      }
+
+      .shell {
+        width: 1024px;
+        height: 600px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+        box-shadow: 20px 30px 20px rgba(0, 0, 0, 0.25);
+      }
+
+      .images {
+        width: 700%;
+        height: 100%;
+        display: flex;
+        position: absolute;
+        left: 0;
+        transition: 0.5s;
+      }
+
+      .img {
+        width: 100%;
+        background-size: cover;
+      }
+
+      .img:nth-child(1) {
+        background-image: url("../static/images/1.jpg");
+      }
+
+      .img:nth-child(2) {
+        background-image: url("../static/images/2.jpg");
+      }
+
+      .img:nth-child(3) {
+        background-image: url("../static/images/3.jpg");
+      }
+
+      .img:nth-child(4) {
+        background-image: url("../static/images/4.jpg");
+      }
+
+      .img:nth-child(5) {
+        background-image: url("../static/images/5.jpg");
+      }
+
+      .img:nth-child(6) {
+        background-image: url("../static/images/6.jpg");
+      }
+
+      .img:nth-child(7) {
+        background-image: url("../static/images/7.jpg");
+      }
+
+      .min {
+        display: flex;
+        justify-content: space-evenly;
+        position: absolute;
+        bottom: 40px;
+        width: 30%;
+        z-index: 999;
+        left: 50%;
+        transform: translate(-50%);
+      }
+
+      .m {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        border-radius: 50%;
+        border: solid rgba(255, 255, 255, 0.5) 5px;
+        background-color: #fff;
+      }
+
+      .button {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        display: flex;
+        justify-content: space-between;
+        user-select: none;
+      }
+
+      .button-left,
+      .button-right {
+        font-size: 50px;
+        background-color: rgba(160, 193, 255, 0.2);
+        padding: 0 20px;
+        cursor: pointer;
+        line-height: 600px;
+        color: #fff;
+        display: none;
+      }
+
+      .button-right:hover {
+        background-color: rgba(160, 193, 255, 0.5);
+      }
+
+      .button-left:hover {
+        background-color: rgba(160, 193, 255, 0.5);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="shell">
+      <ul class="images">
+        <li class="img"></li>
+        <li class="img"></li>
+        <li class="img"></li>
+        <li class="img"></li>
+        <li class="img"></li>
+        <li class="img"></li>
+        <li class="img"></li>
+      </ul>
+      <ul class="min">
+        <li class="m"></li>
+        <li class="m"></li>
+        <li class="m"></li>
+        <li class="m"></li>
+        <li class="m"></li>
+        <li class="m"></li>
+        <li class="m"></li>
+      </ul>
+      <div class="button">
+        <div class="button-left">&lt;</div>
+        <div class="button-right">&gt;</div>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    // window.onload = function(){
+    //     // alert("hello world!");
+    //     const audio = new Audio('../static/bgm.mp3');
+    //     console.log(audio)
+    //     audio.play();
+    // }
+    let left = $(".button-left").eq(0);
+    let right = $(".button-right").eq(0);
+    let m = $(".m");
+    let images = $(".images").eq(0);
+    // 先设置一个index用来计算和控制图片的位置，再设置一个timer作为定时器
+    let index = 0; // 在这里我们先创建一个position为复用函数，作用就是结合index来定义当前图片位置的
+    let onHover = false;
+    let onPlayMusic = false;
+
+    // 在切换图片后自动播放音乐
+    function playMusic() {
+      // 在这里添加播放音乐的逻辑，比如创建 <audio> 元素并设置音乐源
+      const audio = new Audio("../static/bgm.mp3");
+      if (onPlayMusic === false) {
+        audio.play();
+        onPlayMusic = true;
+      }
+    }
+
+    function position() {
+      images.css("left", index * -100 + "%"); // 切换图片
+      m.eq(index)
+        .css("background-color", "yellow")
+        .siblings()
+        .css("background-color", "#fff"); // 只让当前小圆点变色
+    }
+
+    // 然后我们创建一个复用函数add为加函数，如果当前图片的位置index大于等于当前图片的数量的话，
+    // 就说明超出了计算范围，所以得清0，如若不然index就加一
+    function add() {
+      if (index >= m.length - 1) {
+        index = 0;
+      } else {
+        index++;
+      }
+    }
+
+    // 反之，desc为减函数，如果当前图片的位置index小于1了，那么它的值就反弹到最顶端，也就是轮播图的最后面，如若不然index就减一
+    function desc() {
+      if (index < 1) {
+        index = m.length - 1;
+      } else {
+        index--;
+      }
+    }
+
+    // 创建于给timer来当作复用时间的函数，每隔三秒钟index就加一，然后加入增加的add函数和desc函数来判断一下，再加入定位函数
+    function timer() {
+      // 这里要来个判断，不然点击事件发生后轮播图会莫名其妙加速
+      if (onHover === false) {
+        time = setInterval(() => {
+          index++;
+          desc();
+          add();
+          position();
+        }, 3000);
+      }
+    }
+
+    // 接下来我们设置一下按钮，left为左边的按钮，因为点击时图片会反方向倒退，所以我们套入desc函数进去，顺便定位一下
+    // 点击的时候我们必须先把定时器停掉再重新执行一遍，不然会在你点几下一张图片时，定时器倒计时一到也跟着生效，这样子就会连跳两张图片
+    left.on("click", () => {
+      playMusic();
+      clearInterval(time);
+      desc();
+      position();
+      timer();
+    });
+
+    // 右边的按钮和左边也是差不多
+    right.on("click", () => {
+      playMusic();
+      clearInterval(time);
+      add();
+      position();
+      timer();
+    });
+    // 在弄好左右两个按钮的时候，我们还需要生效下面的小图片按钮，
+    // 首先我们先遍历以便，然后获取当前点击的那个小图片按钮的值并赋值给index，这样子就可以随之跳转
+    for (let i = 0; i < m.length; i++) {
+      m[i].addEventListener("click", () => {
+        index = i;
+        playMusic();
+        position();
+        clearInterval(time);
+        timer();
+      });
+    }
+
+    // 最后的最后我们将定时器开起来，这样子图片就可以自动轮播了
+    position();
+    timer();
+    $(".shell").hover(
+      function () {
+        // 鼠标划入
+        $(".button div").show();
+        onHover = true;
+        clearTimeout(time); // 移除计时器
+      },
+      function () {
+        //鼠标划出
+        $(".button div").hide();
+        onHover = false;
+        timer(); //重新设置计时器
+      }
+    );
+  </script>
+</html>
